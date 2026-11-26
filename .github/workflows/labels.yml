@@ -1,0 +1,44 @@
+name: Labels
+
+# Label pull requests: "character" when they touch packs/, "fan-art" when a chara.json in them has based_on.
+# pull_request_target so it can label pull requests from forks. It never checks out or runs the pull request's
+# code: it only reads the list of changed files and the chara.json text through the API.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          files="$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[] | select(.status != "removed") | .filename')"
+          labels=""
+          if printf '%s\n' "$files" | grep -q '^packs/'; then labels="character"; fi
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            if gh api "repos/$HEAD_REPO/contents/$f?ref=$HEAD_SHA" --jq '.content' 2>/dev/null | python3 -I -c '
+          import base64, json, sys
+          try:
+              meta = json.loads(base64.b64decode(sys.stdin.read()))
+          except Exception:
+              sys.exit(1)
+          sys.exit(0 if isinstance(meta, dict) and str(meta.get("based_on", "")).strip() else 1)'; then
+              labels="$labels,fan-art"; break
+            fi
+          done <<< "$(printf '%s\n' "$files" | grep -E '^packs/[a-z0-9-]+/chara\.json$' || true)"
+          labels="${labels#,}"
+          if [ -n "$labels" ]; then gh pr edit "$PR" -R "$REPO" --add-label "$labels"; fi
+          echo "labels: ${labels:-none}"

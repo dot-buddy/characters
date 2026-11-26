@@ -3,10 +3,14 @@ name: Packs
 # Pull requests: build Dot Buddy, check every pack and load it in the app, check the pull request's own rules
 # (one pack, the author's own) with the base branch's copy of the checker, and upload the changed packs' previews.
 # main: draw previews for new or changed packs, commit packs/index.json and the README gallery, then publish the site.
+# Every Monday: check every pack against the app's latest main, so a change in the app that breaks a pack shows up here
+# even when nobody opens a pull request (a failed scheduled run emails the maintainers).
 on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: "17 3 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -15,7 +19,7 @@ permissions:
 jobs:
   check:
     name: Check packs
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v7
@@ -35,14 +39,15 @@ jobs:
       - name: Take the checker from the base branch
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
-        run: git show "$BASE:scripts/packs.py" > "$RUNNER_TEMP/packs.py"
+        run: |
+          if [ -n "$BASE" ]; then git show "$BASE:scripts/packs.py" > "$RUNNER_TEMP/packs.py"; else cp scripts/packs.py "$RUNNER_TEMP/packs.py"; fi
       - name: Check
         env:
           DOTBUDDY_SRC: .app
           PACKS_ROOT: ${{ github.workspace }}
         run: python3 "$RUNNER_TEMP/packs.py" check --app .app/bin/DotBuddy
       - name: Pull request rules and previews
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
         env:
           DOTBUDDY_SRC: .app
           PACKS_ROOT: ${{ github.workspace }}
@@ -50,7 +55,7 @@ jobs:
           AUTHOR: ${{ github.event.pull_request.user.login }}
         run: python3 "$RUNNER_TEMP/packs.py" check-pr --base "$BASE" --author "$AUTHOR" --app .app/bin/DotBuddy --previews "$RUNNER_TEMP/previews"
       - name: Upload previews for review
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v7
         with:
           name: previews
@@ -59,7 +64,7 @@ jobs:
 
   publish:
     name: Update the gallery and the site
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     permissions:
       contents: write
