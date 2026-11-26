@@ -28,6 +28,10 @@ jobs:
       - name: Build Dot Buddy
         working-directory: .app
         run: APP="$RUNNER_TEMP/Dot.app" FORCE=1 ./build.sh
+      - name: Test the pack rules
+        env:
+          DOTBUDDY_SRC: .app
+        run: python3 -I scripts/test_packs.py
       - name: Take the checker from the base branch
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
