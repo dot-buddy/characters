@@ -183,7 +183,8 @@
     "en": "Ghost",
     "ko": "유령"
    },
-   "preview": "preview.gif"
+   "preview": "preview.gif",
+   "added": "2026-11-26"
   },
   {
    "id": "onigiri",
@@ -367,7 +368,8 @@
     "en": "Rice Ball",
     "ko": "주먹밥"
    },
-   "preview": "preview.gif"
+   "preview": "preview.gif",
+   "added": "2026-11-26"
   },
   {
    "id": "onion",
@@ -581,7 +583,8 @@
     "en": "Onion",
     "ko": "양파"
    },
-   "preview": "preview.gif"
+   "preview": "preview.gif",
+   "added": "2026-11-26"
   },
   {
    "id": "snowman",
@@ -765,7 +768,8 @@
     "en": "Snowman",
     "ko": "눈사람"
    },
-   "preview": "preview.gif"
+   "preview": "preview.gif",
+   "added": "2026-11-26"
   },
   {
    "id": "teacup",
@@ -949,7 +953,8 @@
     "en": "Teacup",
     "ko": "찻잔"
    },
-   "preview": "preview.gif"
+   "preview": "preview.gif",
+   "added": "2026-11-26"
   }
  ]
 }
