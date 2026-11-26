@@ -119,6 +119,8 @@ def page(lang, packs, prefix):
 <meta property="og:title" content="{t["title"]}">
 <meta property="og:description" content="{e(t["lede"])}">
 <meta property="og:url" content="{url}">
+<meta property="og:image" content="{SITE}social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>{CSS}</style>
 </head>
 <body>
@@ -165,7 +167,7 @@ def main():
                 z.write(src / f["name"], f'{p["id"]}/{f["name"]}')
     (out / "index.html").write_text(page("en", packs, ""))
     (out / "ko" / "index.html").write_text(page("ko", packs, "../"))
-    for f in sorted((ROOT / "site").glob("*")):                                       # files served as they are (the Search Console check)
+    for f in sorted((ROOT / "site").glob("*")):                                       # files served as they are (the Search Console check, the social preview image)
         if f.is_file():
             shutil.copy(f, out / f.name)
     today = date.today().isoformat()
