@@ -148,6 +148,9 @@ def main():
                 z.write(src / f["name"], f'{p["id"]}/{f["name"]}')
     (out / "index.html").write_text(page("en", packs, ""))
     (out / "ko" / "index.html").write_text(page("ko", packs, "../"))
+    for f in sorted((ROOT / "site").glob("*")):                                       # files served as they are (the Search Console check)
+        if f.is_file():
+            shutil.copy(f, out / f.name)
     today = date.today().isoformat()
     (out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                      f"  <url><loc>{SITE}</loc><lastmod>{today}</lastmod></url>\n  <url><loc>{SITE}ko/</loc><lastmod>{today}</lastmod></url>\n</urlset>\n")
