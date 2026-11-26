@@ -1,6 +1,6 @@
 name: Report a character
 description: A community character uses your character or art, or breaks the gallery rules. A maintainer checks and removes it.
-labels: [character]
+labels: [takedown]
 body:
   - type: markdown
     attributes:
@@ -11,7 +11,7 @@ body:
     id: pack
     attributes:
       label: Which character
-      description: Its folder name under community/, or its name in the gallery.
+      description: Its folder name under packs/, or its name in the gallery.
       placeholder: onion
     validations:
       required: true
