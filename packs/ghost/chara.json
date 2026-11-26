@@ -1,49 +1,50 @@
 {
- "name": "Ghost",
- "names": {
-  "en": "Ghost",
-  "ko": "유령"
- },
- "frame": [
-  26,
-  26
- ],
- "height": 24,
- "fps": {
-  "default": 3,
-  "walk": 8,
-  "talk": 6,
-  "wave": 5,
-  "cheer": 4,
-  "drag": 6,
-  "sleep": 1,
-  "climb": 5,
-  "hang": 2,
-  "work": 6,
-  "roll": 16,
-  "dizzy": 4,
-  "ask": 2,
-  "hum": 3,
-  "party": 6,
-  "sneak": 5,
-  "stalk": 6,
-  "spin": 8
- },
- "eyes": [
-  [
-   10,
-   12,
-   2,
-   3
+  "name": "Ghost",
+  "names": {
+    "en": "Ghost",
+    "ko": "유령"
+  },
+  "frame": [
+    26,
+    26
   ],
-  [
-   14,
-   12,
-   2,
-   3
-  ]
- ],
- "author": "doldoldol21",
- "license": "CC-BY-4.0",
- "description": "A friendly little ghost whose hem sways as it floats along."
+  "height": 24,
+  "fps": {
+    "default": 3,
+    "walk": 8,
+    "talk": 6,
+    "wave": 5,
+    "cheer": 4,
+    "drag": 6,
+    "sleep": 1,
+    "climb": 5,
+    "hang": 2,
+    "work": 6,
+    "roll": 16,
+    "dizzy": 4,
+    "ask": 2,
+    "hum": 3,
+    "party": 6,
+    "sneak": 5,
+    "stalk": 6,
+    "spin": 8
+  },
+  "eyes": [
+    [
+      10,
+      12,
+      2,
+      3
+    ],
+    [
+      14,
+      12,
+      2,
+      3
+    ]
+  ],
+  "author": "doldoldol21",
+  "license": "CC-BY-4.0",
+  "description": "A friendly little ghost whose hem sways as it floats along.",
+  "based_on": "Test (label check)"
 }
