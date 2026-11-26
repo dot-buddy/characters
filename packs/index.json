@@ -184,7 +184,9 @@
     "ko": "유령"
    },
    "preview": "preview.gif",
-   "added": "2026-11-23"
+   "added": "2026-11-23",
+   "discussion": "https://github.com/dot-buddy/characters/discussions/5",
+   "likes": 0
   },
   {
    "id": "onigiri",
@@ -369,7 +371,9 @@
     "ko": "주먹밥"
    },
    "preview": "preview.gif",
-   "added": "2026-11-23"
+   "added": "2026-11-23",
+   "discussion": "https://github.com/dot-buddy/characters/discussions/6",
+   "likes": 0
   },
   {
    "id": "onion",
@@ -584,7 +588,9 @@
     "ko": "양파"
    },
    "preview": "preview.gif",
-   "added": "2026-11-26"
+   "added": "2026-11-26",
+   "discussion": "https://github.com/dot-buddy/characters/discussions/7",
+   "likes": 0
   },
   {
    "id": "snowman",
@@ -769,7 +775,9 @@
     "ko": "눈사람"
    },
    "preview": "preview.gif",
-   "added": "2026-11-23"
+   "added": "2026-11-23",
+   "discussion": "https://github.com/dot-buddy/characters/discussions/8",
+   "likes": 0
   },
   {
    "id": "teacup",
@@ -954,7 +962,9 @@
     "ko": "찻잔"
    },
    "preview": "preview.gif",
-   "added": "2026-11-20"
+   "added": "2026-11-20",
+   "discussion": "https://github.com/dot-buddy/characters/discussions/9",
+   "likes": 0
   }
  ]
 }
