@@ -45,5 +45,6 @@
  ],
  "author": "doldoldol21",
  "license": "CC-BY-4.0",
- "description": "A friendly little ghost whose hem sways as it floats along."
+ "description": "A friendly little ghost whose hem sways as it floats along.",
+ "descriptions": {"ko": "옷자락을 살랑이며 둥둥 떠다니는 작은 유령"}
 }

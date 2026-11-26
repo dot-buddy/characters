@@ -45,5 +45,6 @@
  ],
  "author": "doldoldol21",
  "license": "CC-BY-4.0",
- "description": "A snowman with a red scarf and a carrot nose."
+ "description": "A snowman with a red scarf and a carrot nose.",
+ "descriptions": {"ko": "빨간 목도리에 당근 코를 단 눈사람"}
 }

@@ -35,7 +35,8 @@ On top of the [usual keys](https://github.com/doldoldol21/dot-buddy/blob/main/CH
   "names": { "en": "Teacup", "ko": "찻잔" },
   "author": "your-github-name",
   "license": "CC-BY-4.0",
-  "description": "A little teacup that steams while it waits."
+  "description": "A little teacup that steams while it waits.",
+  "descriptions": { "ko": "기다리는 동안 김이 모락모락 나는 작은 찻잔" }
 }
 ```
 
@@ -46,6 +47,7 @@ Fan art also adds `"based_on": "Character (Series)"`.
 | `author` | Your GitHub username (shown as "by …" and linked in the gallery) |
 | `license` | The license for your drawings: `CC-BY-4.0`, `CC-BY-SA-4.0`, `CC0-1.0` or `MIT` |
 | `description` | One short line, at most 140 characters (optional) |
+| `descriptions` | The same line in other languages, e.g. `{"ko": "…"}` (optional; the app and the gallery show the one for the reader's language) |
 | `based_on` | Fan art only: the character and series it's based on, at most 60 characters. Shown as "Fan art of …" |
 
 ### Rules

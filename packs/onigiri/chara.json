@@ -45,5 +45,6 @@
  ],
  "author": "doldoldol21",
  "license": "CC-BY-4.0",
- "description": "A rice ball in a seaweed wrap, ready for a long day of coding."
+ "description": "A rice ball in a seaweed wrap, ready for a long day of coding.",
+ "descriptions": {"ko": "김을 두르고 긴 코딩을 함께할 준비가 된 주먹밥"}
 }

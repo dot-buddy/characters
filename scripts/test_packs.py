@@ -28,6 +28,9 @@ with tempfile.TemporaryDirectory() as td:
     errs = " ".join(cm.check_pack(bad, names))
     check("a bad pack is refused for each reason", [k in errs for k in ("folder name", "run.sh", "'author' is required", "'license' must be", "idle.png is not a PNG")], [True] * 5)
 
+    open(os.path.join(bad, "chara.json"), "w").write('{"name": "x", "author": "a", "license": "MIT", "descriptions": {"ko": "' + "가" * 141 + '"}}')
+    check("a description in another language is limited like the main one", any("'descriptions'" in e for e in cm.check_pack(bad, names)), True)
+
     cp = os.path.join(td, ids[0] + "-copy"); shutil.copytree(os.path.join(cm.COMMUNITY, ids[0]), cp)
     shapes = {i: cm.idle_shape(os.path.join(cm.COMMUNITY, i)) for i in ids}
     check("every pack has an idle outline", all(shapes.values()), True)

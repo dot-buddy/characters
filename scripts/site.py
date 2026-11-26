@@ -93,10 +93,11 @@ def page(lang, packs, prefix):
     cards = []
     for p in packs:
         name = p.get("names", {}).get(lang) or p.get("names", {}).get("en") or p["name"]
-        text = " ".join([name, p["name"], p["author"], p.get("description", ""), p.get("based_on", "")] + list(p.get("names", {}).values())).lower()
+        about = p.get("descriptions", {}).get(lang) or p.get("description", "")
+        text = " ".join([name, p["name"], p["author"], p.get("description", ""), p.get("based_on", "")] + list(p.get("names", {}).values()) + list(p.get("descriptions", {}).values())).lower()
         pic = f'<img src="{prefix}packs/{e(p["id"])}/preview.gif" alt="{e(name)}" loading="lazy">' if p.get("preview") else ""
         fan = f'<span class="fan">{e(t["fan"].format(p["based_on"]))}</span>' if p.get("based_on") else ""
-        desc = f'<p>{e(p["description"])}</p>' if p.get("description") else ""
+        desc = f'<p>{e(about)}</p>' if about else ""
         disc = p.get("discussion", "")
         like = (f'<a class="like" href="{e(disc)}" title="{e(t["like"])}" aria-label="{e(t["like"])}: {int(p.get("likes", 0))}">♥ {int(p.get("likes", 0))}</a>'
                 if disc.startswith(f"https://github.com/{REPO}/discussions/") else "")

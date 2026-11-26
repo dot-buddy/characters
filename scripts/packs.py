@@ -29,7 +29,7 @@ APP_SRC = "https://raw.githubusercontent.com/doldoldol21/dot-buddy/main/Sources/
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,31}$")
 RESERVED = {"acorn", "mandu", "sprout", "cloud", "candle", "pebble", "index", "readme"}   # the built-in characters keep their names
 LICENSES = {"CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "MIT"}
-KEYS = {"name", "names", "frame", "height", "fps", "eyes", "author", "license", "description", "based_on"}
+KEYS = {"name", "names", "descriptions", "frame", "height", "fps", "eyes", "author", "license", "description", "based_on"}
 REQUIRED = ["idle", "walk", "work", "sleep", "ask"]                      # the motions people see most (fall/jump: one of the two)
 MAINTAINERS = {"doldoldol21"}                                              # check-pr's ownership rules don't apply to them
 SAME_SHAPE = 0.95                                                          # idle outlines this alike are treated as the same character
@@ -173,6 +173,8 @@ def check_pack(d, names):
             errs.append("chara.json: 'license' must be one of " + ", ".join(sorted(LICENSES)))
         if "names" in meta and not (isinstance(meta["names"], dict) and all(isinstance(v, str) and len(v) <= 40 for v in meta["names"].values())):
             errs.append("chara.json: 'names' must map languages to names, e.g. {\"en\": \"Teacup\", \"ko\": \"찻잔\"}")
+        if "descriptions" in meta and not (isinstance(meta["descriptions"], dict) and all(isinstance(v, str) and len(v) <= 140 for v in meta["descriptions"].values())):
+            errs.append("chara.json: 'descriptions' must map languages to one line of at most 140 characters, e.g. {\"ko\": \"김이 모락모락 나는 작은 찻잔\"}")
     # frame sizes: every motion PNG is a strip of frames the size of one idle frame
     idle = png_size(os.path.join(d, "idle.png")) if "idle.png" in files else None
     if "idle.png" in files and not idle:
@@ -212,6 +214,8 @@ def entry(d):
          "description": meta.get("description", "").strip(), "files": files}
     if meta.get("names"):
         e["names"] = meta["names"]
+    if meta.get("descriptions"):
+        e["descriptions"] = {k: v.strip() for k, v in meta["descriptions"].items() if v.strip()}
     if meta.get("based_on", "").strip():
         e["based_on"] = meta["based_on"].strip()
     if os.path.exists(os.path.join(d, "preview.gif")):

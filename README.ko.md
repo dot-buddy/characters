@@ -23,7 +23,8 @@
   "names": { "en": "Teacup", "ko": "찻잔" },
   "author": "내-github-아이디",
   "license": "CC-BY-4.0",
-  "description": "A little teacup that steams while it waits."
+  "description": "A little teacup that steams while it waits.",
+  "descriptions": { "ko": "기다리는 동안 김이 모락모락 나는 작은 찻잔" }
 }
 ```
 
@@ -34,6 +35,7 @@
 | `author` | GitHub 아이디(갤러리에 링크로 나와요) |
 | `license` | 그림의 라이선스: `CC-BY-4.0`, `CC-BY-SA-4.0`, `CC0-1.0`, `MIT` 중 하나 |
 | `description` | 한 줄 소개, 140자 이하(없어도 돼요) |
+| `descriptions` | 다른 언어로 쓴 같은 소개, 예: `{"ko": "…"}`(없어도 돼요. 앱과 갤러리가 보는 사람 언어에 맞춰 보여 줘요) |
 | `based_on` | 팬아트만: 원작 캐릭터와 작품, 60자 이하. "팬아트 · 원작 …" 으로 나와요 |
 
 ### 규칙
