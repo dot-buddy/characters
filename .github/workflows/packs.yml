@@ -5,12 +5,14 @@ name: Packs
 # main: draw previews for new or changed packs, commit packs/index.json and the README gallery, then publish the site.
 # Every Monday: check every pack against the app's latest main, so a change in the app that breaks a pack shows up here
 # even when nobody opens a pull request (a failed scheduled run emails the maintainers).
+# Every day: count the likes (❤️ or 👍 on each pack's discussion) into packs/index.json and publish the site again.
 on:
   pull_request:
   push:
     branches: [main]
   schedule:
     - cron: "17 3 * * 1"
+    - cron: "41 4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +21,7 @@ permissions:
 jobs:
   check:
     name: Check packs
-    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    if: github.event_name == 'pull_request' || (github.event_name == 'schedule' && github.event.schedule == '17 3 * * 1')
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v7
@@ -64,10 +66,11 @@ jobs:
 
   publish:
     name: Update the gallery and the site
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '41 4 * * *')
     runs-on: macos-15
     permissions:
       contents: write
+      discussions: write
     concurrency: publish
     steps:
       - uses: actions/checkout@v7
@@ -84,11 +87,15 @@ jobs:
         env:
           DOTBUDDY_SRC: .app
         run: python3 scripts/packs.py build --app .app/bin/DotBuddy
+      - name: Likes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/packs.py likes
       - name: Commit
         run: |
           git add packs README.md
           if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Update previews, index and gallery"
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Update previews, index, likes and gallery"
           git push
       - name: Site
         run: python3 scripts/site.py _site

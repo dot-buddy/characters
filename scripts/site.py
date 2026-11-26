@@ -22,11 +22,13 @@ TEXT = {
                how="In the app: right-click the pet → Character → <b>More Characters…</b>, or download a zip here and drop it on your pet.",
                search="Search", by="by", fan="Fan art of {}", get="Download zip", add="Add your character", app="Get Dot Buddy",
                other="한국어", other_href="ko/", count="{} characters", empty="No match", report="Report a character",
+               like="Like it on GitHub (❤️ or 👍)", newest="Newest", popular="Most liked", sort="Sort",
                foot="Each character keeps the license its author chose. The original characters behind fan art belong to their owners."),
     "ko": dict(title="도트 친구 캐릭터", lede="코딩 에이전트가 끝나면 알려 주는 맥 바탕화면 도트 펫, 도트 친구에 쓸 수 있게 사람들이 그린 캐릭터예요.",
                how="앱에서 펫을 오른쪽 클릭 → 캐릭터 → <b>다른 캐릭터 받기…</b> 로 받거나, 여기서 zip 을 받아 펫에 끌어다 놓아도 돼요.",
                search="검색", by="그린 사람", fan="팬아트 · 원작 {}", get="zip 받기", add="내 캐릭터 올리기", app="도트 친구 받기",
                other="English", other_href="../", count="캐릭터 {}개", empty="맞는 캐릭터가 없어요", report="캐릭터 신고",
+               like="GitHub에서 좋아요 누르기 (❤️ 또는 👍)", newest="최신순", popular="인기순", sort="정렬",
                foot="캐릭터마다 그린 사람이 고른 라이선스를 따라요. 팬아트의 원작 캐릭터 권리는 원작자에게 있어요."),
 }
 
@@ -58,7 +60,12 @@ h1 { font-size: 36px; line-height: 1.2; margin: 8px 0 8px; }
 .card .meta { color: var(--muted); font-size: 13px; }
 .card .fan { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; align-self: flex-start; }
 .card p { margin: 4px 0 8px; font-size: 14px; }
-.card .get { margin-top: auto; align-self: flex-start; font-size: 14px; font-weight: 600; text-decoration: none; color: #fff; background: #1f2328; padding: 6px 12px; border-radius: 8px; }
+.card .acts { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+.card .like { font-size: 14px; color: var(--muted); text-decoration: none; padding: 6px 4px; }
+.card .like:hover { color: var(--accent); }
+.card .like:focus-visible, .bar select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bar select { font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--fg); }
+.card .get { align-self: flex-start; font-size: 14px; font-weight: 600; text-decoration: none; color: #fff; background: #1f2328; padding: 6px 12px; border-radius: 8px; }
 @media (prefers-color-scheme: dark) { .card .get { background: #e6e8eb; color: #111316; } }
 .card .get:focus-visible, .bar input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .empty { color: var(--muted); }
@@ -68,6 +75,11 @@ footer { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; border-top:
 
 JS = """
 const q = document.getElementById('q'), cards = [...document.querySelectorAll('.card')], count = document.getElementById('count'), empty = document.getElementById('empty');
+const sort = document.getElementById('sort'), grid = document.querySelector('.grid');
+sort.addEventListener('change', () => {
+  const by = sort.value === 'popular' ? (a, b) => (b.dataset.likes - a.dataset.likes) || b.dataset.added.localeCompare(a.dataset.added) : (a, b) => b.dataset.added.localeCompare(a.dataset.added);
+  for (const c of [...cards].sort(by)) grid.appendChild(c);
+});
 q.addEventListener('input', () => {
   const t = q.value.trim().toLowerCase(); let n = 0;
   for (const c of cards) { const on = !t || c.dataset.text.includes(t); c.hidden = !on; n += on; }
@@ -85,9 +97,12 @@ def page(lang, packs, prefix):
         pic = f'<img src="{prefix}packs/{e(p["id"])}/preview.gif" alt="{e(name)}" loading="lazy">' if p.get("preview") else ""
         fan = f'<span class="fan">{e(t["fan"].format(p["based_on"]))}</span>' if p.get("based_on") else ""
         desc = f'<p>{e(p["description"])}</p>' if p.get("description") else ""
-        cards.append(f'<article class="card" data-text="{e(text)}"><div class="pic">{pic}</div><div class="body"><h2>{e(name)}</h2>'
+        disc = p.get("discussion", "")
+        like = (f'<a class="like" href="{e(disc)}" title="{e(t["like"])}" aria-label="{e(t["like"])}: {int(p.get("likes", 0))}">♥ {int(p.get("likes", 0))}</a>'
+                if disc.startswith(f"https://github.com/{REPO}/discussions/") else "")
+        cards.append(f'<article class="card" data-text="{e(text)}" data-added="{e(p.get("added", ""))}" data-likes="{int(p.get("likes", 0))}"><div class="pic">{pic}</div><div class="body"><h2>{e(name)}</h2>'
                      f'<div class="meta">{t["by"]} <a href="https://github.com/{e(p["author"])}">@{e(p["author"])}</a> · {e(p["license"])}</div>{fan}{desc}'
-                     f'<a class="get" href="{prefix}{e(p["id"])}.zip" download>{t["get"]}</a></div></article>')
+                     f'<div class="acts"><a class="get" href="{prefix}{e(p["id"])}.zip" download>{t["get"]}</a>{like}</div></div></article>')
     url = SITE + ("ko/" if lang == "ko" else "")
     return f"""<!doctype html>
 <html lang="{lang}">
@@ -117,6 +132,7 @@ def page(lang, packs, prefix):
 <div class="bar">
   <input id="q" type="search" placeholder="{t["search"]}" aria-label="{t["search"]}">
   <span class="count" id="count" data-fmt="{t["count"]}">{t["count"].format(len(packs))}</span>
+  <select id="sort" aria-label="{t["sort"]}"><option value="newest">{t["newest"]}</option><option value="popular">{t["popular"]}</option></select>
   <a class="add" href="https://github.com/{REPO}/blob/main/{"README.ko.md" if lang == "ko" else "README.md"}#{"내-캐릭터-올리기" if lang == "ko" else "share-your-character"}">{t["add"]}</a>
 </div>
 <div class="grid">

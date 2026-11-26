@@ -7,6 +7,9 @@
                                                             with --previews, also draw the changed packs' previews there for review
   python3 scripts/packs.py build --app <DotBuddy binary>     check, draw packs/<id>/preview.gif with the app,
                                                             write packs/index.json and the gallery in README.md
+  python3 scripts/packs.py likes                             give each pack a discussion (Show and tell) and write how many
+                                                            people liked it (a ❤️ or 👍 on that discussion) into packs/index.json.
+                                                            Needs GITHUB_TOKEN with discussions: write
 
 Contributors only add packs/<id>/ (chara.json + PNGs). preview.gif, index.json and the gallery are made by CI after
 the merge, so a pull request never needs to touch them. Standard library only.
@@ -298,6 +301,9 @@ def build(app):
                 return False
             e = entry(d)
         e["added"] = old.get(pid, {}).get("added") or added(pid)                       # when the pack first appeared (the site lists newest first)
+        for k in ("likes", "discussion"):                                              # kept from the last `likes` run
+            if k in old.get(pid, {}):
+                e[k] = old[pid][k]
         out.append(e)
     json.dump({"version": 1, "packs": out}, open(INDEX, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     open(INDEX, "a").write("\n")
@@ -360,6 +366,63 @@ def check_pr(base, author, app=None, previews=None):
     return not errs
 
 
+LIKE = {"HEART", "THUMBS_UP"}
+CATEGORY = "show-and-tell"
+MARK = "<!-- dot-buddy pack: {} -->"
+
+
+def gql(query, **variables):
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    req = urllib.request.Request("https://api.github.com/graphql", data=json.dumps({"query": query, "variables": variables}).encode(),
+                                 headers={"Authorization": f"bearer {token}", "User-Agent": "dot-buddy-packs", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        out = json.loads(r.read())
+    if out.get("errors"):
+        raise RuntimeError(out["errors"][0].get("message"))
+    return out["data"]
+
+
+def likes():
+    """One discussion per pack, and the number of people who liked it (counted once each, ❤️ or 👍)"""
+    owner, name = (os.environ.get("GITHUB_REPOSITORY") or "dot-buddy/characters").split("/")
+    repo = gql("""query($o:String!,$n:String!){repository(owner:$o,name:$n){id discussionCategories(first:25){nodes{id slug}}
+                 discussions(first:100,orderBy:{field:CREATED_AT,direction:ASC}){nodes{number url body}}}}""", o=owner, n=name)["repository"]
+    cat = next((c["id"] for c in repo["discussionCategories"]["nodes"] if c["slug"] == CATEGORY), None)
+    known = {}
+    for d in repo["discussions"]["nodes"]:
+        m = re.search(r"<!-- dot-buddy pack: ([a-z0-9-]+) -->", d["body"] or "")
+        if m:
+            known.setdefault(m.group(1), d)
+    index = json.load(open(INDEX, encoding="utf-8"))
+    site = "https://" + owner + ".github.io/" + name + "/"
+    for e in index["packs"]:
+        pid, d = e["id"], known.get(e["id"])
+        if not d and cat:
+            body = (f"{MARK.format(pid)}\n**{e['name']}** by [{e['author']}](https://github.com/{e['author']})" + (f" — fan art of {e['based_on']}" if e.get("based_on") else "") +
+                    f"\n\n![{e['name']}](https://raw.githubusercontent.com/{owner}/{name}/main/packs/{pid}/preview.gif)\n\n" +
+                    (e.get("description", "") + "\n\n" if e.get("description") else "") +
+                    f"Like this character? Leave a ❤️ or 👍 on this post. The count shows in the [gallery]({site}) and in Dot Buddy's **More Characters…** list (updated once a day).")
+            d = gql("""mutation($r:ID!,$c:ID!,$t:String!,$b:String!){createDiscussion(input:{repositoryId:$r,categoryId:$c,title:$t,body:$b}){discussion{number url}}}""",
+                    r=repo["id"], c=cat, t=f"{e['name']} by {e['author']}", b=body)["createDiscussion"]["discussion"]
+            print(f"discussion for {pid}: {d['url']}")
+        if not d:
+            continue
+        users, cursor = set(), None
+        while True:
+            page = gql("""query($o:String!,$n:String!,$k:Int!,$a:String){repository(owner:$o,name:$n){discussion(number:$k){
+                          reactions(first:100,after:$a){nodes{content user{login}} pageInfo{hasNextPage endCursor}}}}}""",
+                       o=owner, n=name, k=d["number"], a=cursor)["repository"]["discussion"]["reactions"]
+            users |= {r["user"]["login"] for r in page["nodes"] if r["content"] in LIKE and r.get("user")}
+            if not page["pageInfo"]["hasNextPage"]:
+                break
+            cursor = page["pageInfo"]["endCursor"]
+        e["discussion"], e["likes"] = d["url"], len(users)
+        print(f"{pid}: {len(users)} like(s)")
+    json.dump(index, open(INDEX, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    open(INDEX, "a").write("\n")
+    return True
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     app = a[a.index("--app") + 1] if "--app" in a and a.index("--app") + 1 < len(a) else None
@@ -370,5 +433,7 @@ if __name__ == "__main__":
         sys.exit(0 if check_pr(opt("--base"), opt("--author"), app, opt("--previews")) else 1)
     if a[:1] == ["build"] and app:
         sys.exit(0 if build(app) else 1)
+    if a[:1] == ["likes"]:
+        sys.exit(0 if likes() else 1)
     print(__doc__)
     sys.exit(2)
