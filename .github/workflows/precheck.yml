@@ -1,0 +1,63 @@
+name: Pre-check
+
+# Read the words in a character pull request (each changed chara.json's name and description) and leave one comment
+# with what to look at (scripts/precheck.py): plain rules, then a small open model run on this runner with Ollama
+# (no API key, nothing leaves the runner). The files and pictures are checked by "Packs".
+# pull_request_target so it can comment on pull requests from forks. It runs the base branch's script and reads the
+# chara.json text through the API; the pull request's code is never checked out or run. Findings are hints.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: precheck-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  precheck:
+    if: github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Read the changed chara.json files
+        id: read
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/meta"; args=""
+          for f in $(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[] | select(.status != "removed") | .filename' | grep -E '^packs/[a-z0-9-]+/chara\.json$' || true); do
+            pack="$(basename "$(dirname "$f")")"
+            gh api "repos/$HEAD_REPO/contents/$f?ref=$HEAD_SHA" --jq '.content' | base64 -d > "$RUNNER_TEMP/meta/$pack.json" || continue
+            args="$args --meta $pack=$RUNNER_TEMP/meta/$pack.json"
+          done
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+
+      - name: Small local model
+        if: steps.read.outputs.args != ''
+        continue-on-error: true
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh > /dev/null
+          (ollama serve > "$RUNNER_TEMP/ollama.log" 2>&1 &)
+          sleep 5
+          ollama pull gemma3:4b > /dev/null
+
+      - name: Pre-check
+        if: steps.read.outputs.args != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: python3 -I scripts/precheck.py ${{ steps.read.outputs.args }} --model gemma3:4b --post

@@ -9,6 +9,7 @@ Follow [Share your character](README.md#share-your-character) in the README. In 
 After you open the pull request:
 
 - CI runs **Check packs**. If it fails, the log says what to fix, line by line.
+- A bot comment reads the name and description: no links, and if the name is a well-known character, a reminder to add `based_on`. It's a hint, not a blocker (the character part is a small model and can be wrong).
 - A maintainer looks at the preview and usually replies within a few days.
 - After the merge, CI draws the preview and the character shows up in the [gallery](https://dot-buddy.github.io/characters/) and in every Dot Buddy's **More Characters…** list. You don't need to touch `preview.gif`, `packs/index.json` or the README gallery.
 
