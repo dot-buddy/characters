@@ -1,0 +1,33 @@
+name: Thanks
+
+# Thanks the author of a merged character pull request in a comment. The publish job (packs.yml) adds the character to
+# the gallery, the in-app list and the artists list in the READMEs a few minutes later.
+# pull_request_target so it can comment on pull requests from forks; nothing from the pull request is checked out or run.
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  thanks:
+    if: github.event.pull_request.merged && github.event.pull_request.user.type != 'Bot' && github.event.pull_request.user.login != 'doldoldol21'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          packs=$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename | select(startswith("packs/")) | split("/")[1]' | sort -u | grep -vx 'index.json' || true)
+          if [ -n "$packs" ]; then
+            first=$(echo "$packs" | head -1)
+            text="Merged. Thank you for drawing, @$AUTHOR! In a few minutes CI draws the preview, and **$first** shows up in the [gallery](https://dot-buddy.github.io/characters/) and in the app under **More Characters…**. You'll be on the [artists list](https://github.com/$REPO#artists) too."
+          else
+            text="Merged. Thank you for the contribution, @$AUTHOR!"
+          fi
+          gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$text" > /dev/null

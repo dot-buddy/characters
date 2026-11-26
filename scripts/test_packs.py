@@ -49,6 +49,12 @@ check("links, mentions and e-mail in the words are flagged, plain words aren't",
 check("model words are cleaned before they reach the comment", pc.clean("Pikachu (Pokémon) https://x.example @all <b>"), "Pikachu (Pokémon) all b")
 check("a clean pull request gets a thank-you", "look fine" in pc.comment([]), True)
 
+# the artists list in the READMEs: everyone once, in the order their first pack was added
+art = cm.artists([{"id": "b", "author": "Ann", "added": "2026-12-02"}, {"id": "a", "author": "bob", "added": "2026-12-01"},
+                  {"id": "c", "author": "ann", "added": "2026-12-03"}] + [{"id": f"x{i}", "author": f"u{i}", "added": "2026-12-09"} for i in range(6)])
+check("each artist once, first pack first, seven to a row", (art.index('alt="bob"') < art.index('alt="Ann"'), art.lower().count('alt="ann"'), art.count("<tr>")), (True, 1, 2))
+check("no packs, no table", cm.artists([]), "")
+
 if fails:
     print("FAIL\n  " + "\n  ".join(fails)); sys.exit(1)
 print("ok — pack rules")

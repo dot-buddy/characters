@@ -24,6 +24,7 @@ HERE = os.path.realpath(os.environ.get("PACKS_ROOT") or os.path.dirname(os.path.
 COMMUNITY = os.path.join(HERE, "packs")
 INDEX = os.path.join(COMMUNITY, "index.json")
 README = os.path.join(HERE, "README.md")
+README_KO = os.path.join(HERE, "README.ko.md")
 APP_SRC = "https://raw.githubusercontent.com/doldoldol21/dot-buddy/main/Sources/Charas.swift"
 
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,31}$")
@@ -37,6 +38,7 @@ MAX_FILE, MAX_PACK, MAX_FRAMES = 64 << 10, 512 << 10, 16
 MAX_W, MAX_H = 30, 32
 GENERATED = {"preview.gif"}
 START, END = "<!-- gallery:start -->", "<!-- gallery:end -->"
+A_START, A_END = "<!-- artists:start -->", "<!-- artists:end -->"
 
 
 def motions():
@@ -277,6 +279,25 @@ def gallery(entries):
     return "\n".join(rows)
 
 
+def artists(entries):
+    """Everyone who drew a pack here, in the order their first pack was added, as avatars that link to their profiles"""
+    seen = []
+    for e in sorted(entries, key=lambda e: (e.get("added", ""), e["id"])):
+        if e["author"].lower() not in [a.lower() for a in seen]:
+            seen.append(e["author"])
+    cell = ('<td align="center"><a href="https://github.com/{0}"><img src="https://github.com/{0}.png?size=96" width="48" height="48" '
+            'alt="{0}"><br><sub>{0}</sub></a></td>')
+    rows = [seen[i:i + 7] for i in range(0, len(seen), 7)]
+    return "<table>" + "".join("<tr>" + "".join(cell.format(a) for a in r) + "</tr>" for r in rows) + "</table>" if seen else ""
+
+
+def between(path, start, end, text):
+    if os.path.exists(path):
+        s = open(path, encoding="utf-8").read()
+        if start in s and end in s:
+            open(path, "w", encoding="utf-8").write(s[:s.index(start) + len(start)] + "\n" + text + "\n" + s[s.index(end):])
+
+
 def added(pid):
     try:
         days = git("log", "--diff-filter=A", "--format=%cs", "--", f"packs/{pid}/chara.json").split()
@@ -311,11 +332,9 @@ def build(app):
         out.append(e)
     json.dump({"version": 1, "packs": out}, open(INDEX, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     open(INDEX, "a").write("\n")
-    if os.path.exists(README):
-        s = open(README, encoding="utf-8").read()
-        if START in s and END in s:
-            s = s[:s.index(START) + len(START)] + "\n" + gallery(out) + "\n" + s[s.index(END):]
-            open(README, "w", encoding="utf-8").write(s)
+    between(README, START, END, gallery(out))
+    for path in (README, README_KO):
+        between(path, A_START, A_END, artists(out))
     print(f"index: {len(out)} pack(s)")
     return True
 

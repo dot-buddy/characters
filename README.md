@@ -18,12 +18,20 @@ Characters people drew for [Dot Buddy](https://github.com/doldoldol21/dot-buddy)
 | <img src="packs/teacup/preview.gif" width="220" alt="Teacup"> | **Teacup**<br>A little teacup that steams while it waits. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
 <!-- gallery:end -->
 
+## Artists
+
+Thank you to everyone who drew a character for the gallery. Draw one and you'll be here too.
+
+<!-- artists:start -->
+<table><tr><td align="center"><a href="https://github.com/doldoldol21"><img src="https://github.com/doldoldol21.png?size=96" width="48" height="48" alt="doldoldol21"><br><sub>doldoldol21</sub></a></td><td align="center"><a href="https://github.com/GaneshUbale"><img src="https://github.com/GaneshUbale.png?size=96" width="48" height="48" alt="GaneshUbale"><br><sub>GaneshUbale</sub></a></td></tr></table>
+<!-- artists:end -->
+
 ## Share your character
 
 1. Draw a character pack as described in [CHARACTERS.md](https://github.com/doldoldol21/dot-buddy/blob/main/CHARACTERS.md). The gallery needs at least `idle`, `walk`, `work`, `sleep`, `ask` and `fall` (or `jump`); every motion you add makes it livelier.
 2. Try it: drop the folder on your pet (or put it in your characters folder and choose **Reload Characters**).
 3. Fork this repo and add the folder as `packs/<name>/`. The name is 2–32 characters of `a-z`, `0-9` and `-`, and can't be a built-in character's name (mandu, acorn, sprout, cloud, candle, pebble). One character per pull request, and nothing outside its folder.
-4. Open a pull request. CI checks the pack, loads it in the app and attaches its preview (the `previews` artifact on the run). After the merge, CI draws the preview and adds it to the gallery, the site and the in-app list.
+4. Open a pull request. CI checks the pack, loads it in the app and attaches its preview (the `previews` artifact on the run). After the merge, CI draws the preview and adds it to the gallery, the site and the in-app list, and you to the [artists](#artists).
 
 ### chara.json
 

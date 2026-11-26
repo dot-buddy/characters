@@ -6,12 +6,20 @@
 
 **받는 법:** 앱에서 펫을 오른쪽 클릭 → 캐릭터 → **다른 캐릭터 받기…** 에서 **받기** 를 눌러요. [갤러리](https://dot-buddy.github.io/characters/ko/)에서 zip 을 받아 펫에 끌어다 놓아도 돼요(압축은 안 풀어도 돼요).
 
+## 그려 주신 분들
+
+갤러리에 캐릭터를 그려 주신 분들, 고마워요. 하나 그려 올리면 여기에 함께 나와요.
+
+<!-- artists:start -->
+<table><tr><td align="center"><a href="https://github.com/doldoldol21"><img src="https://github.com/doldoldol21.png?size=96" width="48" height="48" alt="doldoldol21"><br><sub>doldoldol21</sub></a></td><td align="center"><a href="https://github.com/GaneshUbale"><img src="https://github.com/GaneshUbale.png?size=96" width="48" height="48" alt="GaneshUbale"><br><sub>GaneshUbale</sub></a></td></tr></table>
+<!-- artists:end -->
+
 ## 내 캐릭터 올리기
 
 1. [CHARACTERS.ko.md](https://github.com/doldoldol21/dot-buddy/blob/main/CHARACTERS.ko.md) 대로 캐릭터 꾸러미를 그려요. 갤러리에 올리려면 `idle`, `walk`, `work`, `sleep`, `ask`, `fall`(또는 `jump`)은 있어야 하고, 동작을 더 그릴수록 더 생생해져요.
 2. 펫에 폴더를 끌어다 놓아 써 봐요(캐릭터 폴더에 넣고 **캐릭터 다시 읽기** 를 눌러도 돼요).
 3. 이 레포를 포크해서 `packs/<이름>/` 으로 폴더를 넣어요. 이름은 `a-z`, `0-9`, `-` 로 2~32자이고, 기본 캐릭터 이름(mandu, acorn, sprout, cloud, candle, pebble)은 못 써요. 풀 리퀘스트 하나에 캐릭터 하나, 그 폴더 밖은 건드리지 않아요.
-4. 풀 리퀘스트를 열어요. CI 가 꾸러미를 검사하고 앱으로 읽어 본 뒤 미리보기를 붙여요(실행 결과의 `previews` 아티팩트). 머지되면 CI 가 미리보기를 그리고 갤러리·사이트·앱 목록에 넣어요.
+4. 풀 리퀘스트를 열어요. CI 가 꾸러미를 검사하고 앱으로 읽어 본 뒤 미리보기를 붙여요(실행 결과의 `previews` 아티팩트). 머지되면 CI 가 미리보기를 그리고 갤러리·사이트·앱 목록에 넣고, [그려 주신 분들](#그려-주신-분들)에 이름을 올려요.
 
 ### chara.json
 

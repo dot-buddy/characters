@@ -93,7 +93,7 @@ jobs:
         run: python3 scripts/packs.py likes
       - name: Commit
         run: |
-          git add packs README.md
+          git add packs README.md README.ko.md
           if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Update previews, index, likes and gallery"
           git push
