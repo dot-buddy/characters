@@ -20,8 +20,8 @@
     },
     {
      "name": "chara.json",
-     "sha256": "c0802763a1b309fedd58d850b72212dfdca6478ba66d5d9b003bbc9185d94dd8",
-     "size": 580
+     "sha256": "2a65d4c91b46fc4a8dfbc57f64000dbcb0fa9e6b735927419a6bc9278bfe1f3e",
+     "size": 668
     },
     {
      "name": "cheer.png",
@@ -183,10 +183,13 @@
     "en": "Ghost",
     "ko": "유령"
    },
+   "descriptions": {
+    "ko": "옷자락을 살랑이며 둥둥 떠다니는 작은 유령"
+   },
    "preview": "preview.gif",
    "added": "2026-11-23",
-   "discussion": "https://github.com/dot-buddy/characters/discussions/5",
-   "likes": 0
+   "likes": 0,
+   "discussion": "https://github.com/dot-buddy/characters/discussions/5"
   },
   {
    "id": "onigiri",
@@ -207,8 +210,8 @@
     },
     {
      "name": "chara.json",
-     "sha256": "a0649569b289dd67d158426bb9845524cfc75c7199aeaf11cc8196f8636e2f83",
-     "size": 594
+     "sha256": "c54df8049eb0383331383c4e396ed4e8f8b65494bf3ea788377fcb7ecbdf7438",
+     "size": 687
     },
     {
      "name": "cheer.png",
@@ -370,10 +373,13 @@
     "en": "Rice Ball",
     "ko": "주먹밥"
    },
+   "descriptions": {
+    "ko": "김을 두르고 긴 코딩을 함께할 준비가 된 주먹밥"
+   },
    "preview": "preview.gif",
    "added": "2026-11-23",
-   "discussion": "https://github.com/dot-buddy/characters/discussions/6",
-   "likes": 0
+   "likes": 0,
+   "discussion": "https://github.com/dot-buddy/characters/discussions/6"
   },
   {
    "id": "onion",
@@ -589,8 +595,8 @@
    },
    "preview": "preview.gif",
    "added": "2026-11-26",
-   "discussion": "https://github.com/dot-buddy/characters/discussions/7",
-   "likes": 0
+   "likes": 0,
+   "discussion": "https://github.com/dot-buddy/characters/discussions/7"
   },
   {
    "id": "snowman",
@@ -611,8 +617,8 @@
     },
     {
      "name": "chara.json",
-     "sha256": "d420f904520f9213d77bc7ff84537f100f616172d99e8975195e1a0acdc6df74",
-     "size": 571
+     "sha256": "611f61aa594857e7d3d45e207558e7eb34833889c7b61fe05142721acc746582",
+     "size": 647
     },
     {
      "name": "cheer.png",
@@ -774,10 +780,13 @@
     "en": "Snowman",
     "ko": "눈사람"
    },
+   "descriptions": {
+    "ko": "빨간 목도리에 당근 코를 단 눈사람"
+   },
    "preview": "preview.gif",
    "added": "2026-11-23",
-   "discussion": "https://github.com/dot-buddy/characters/discussions/8",
-   "likes": 0
+   "likes": 0,
+   "discussion": "https://github.com/dot-buddy/characters/discussions/8"
   },
   {
    "id": "teacup",
@@ -798,8 +807,8 @@
     },
     {
      "name": "chara.json",
-     "sha256": "786814d95b1cb91f45954d636ebd75534ac3f1d46254b23011b19127c4be2fdd",
-     "size": 566
+     "sha256": "6019cd04a7e3b52dfbfb5115434dcc4c42872a0804ac9b240371f3254a778f72",
+     "size": 655
     },
     {
      "name": "cheer.png",
@@ -961,10 +970,13 @@
     "en": "Teacup",
     "ko": "찻잔"
    },
+   "descriptions": {
+    "ko": "기다리는 동안 김이 모락모락 나는 작은 찻잔"
+   },
    "preview": "preview.gif",
    "added": "2026-11-20",
-   "discussion": "https://github.com/dot-buddy/characters/discussions/9",
-   "likes": 0
+   "likes": 0,
+   "discussion": "https://github.com/dot-buddy/characters/discussions/9"
   }
  ]
 }
