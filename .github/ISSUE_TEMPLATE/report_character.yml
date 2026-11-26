@@ -1,0 +1,36 @@
+name: Report a character
+description: A community character uses your character or art, or breaks the gallery rules. A maintainer checks and removes it.
+labels: [character]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We can't judge copyright for every character, so packs are taken down on request.
+        Removing a pack takes it out of the gallery and the in-app list; copies people already installed stay on their Macs.
+  - type: input
+    id: pack
+    attributes:
+      label: Which character
+      description: Its folder name under community/, or its name in the gallery.
+      placeholder: onion
+    validations:
+      required: true
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Why
+      options:
+        - It uses my character or my art, and I own the rights
+        - It's my pack and I want it removed
+        - It copies someone else's sprites or another pack
+        - Violent, sexual or hateful content
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For rights claims, who owns the original and a link to it. Please don't post private contact details here; we'll reply in this issue.
+    validations:
+      required: true

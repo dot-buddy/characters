@@ -1,0 +1,35 @@
+{
+  "name": "Onion",
+  "names": {
+    "en": "Onion",
+    "ko": "양파"
+  },
+  "author": "GaneshUbale",
+  "license": "CC-BY-4.0",
+  "description": "A rosy onion with a fresh green sprout and a sunny little smile.",
+  "frame": [
+    20,
+    20
+  ],
+  "height": 18,
+  "fps": {
+    "default": 3,
+    "walk": 6,
+    "work": 5,
+    "idle": 2
+  },
+  "eyes": [
+    [
+      7,
+      9,
+      2,
+      2
+    ],
+    [
+      12,
+      9,
+      2,
+      2
+    ]
+  ]
+}

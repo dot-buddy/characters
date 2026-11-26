@@ -1,0 +1,103 @@
+name: Packs
+
+# Pull requests: build Dot Buddy, check every pack and load it in the app, check the pull request's own rules
+# (one pack, the author's own) with the base branch's copy of the checker, and upload the changed packs' previews.
+# main: draw previews for new or changed packs, commit packs/index.json and the README gallery, then publish the site.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check packs
+    if: github.event_name == 'pull_request'
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v7
+        with:
+          repository: doldoldol21/dot-buddy
+          path: .app
+      - name: Build Dot Buddy
+        working-directory: .app
+        run: APP="$RUNNER_TEMP/Dot.app" FORCE=1 ./build.sh
+      - name: Take the checker from the base branch
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: git show "$BASE:scripts/packs.py" > "$RUNNER_TEMP/packs.py"
+      - name: Check
+        env:
+          DOTBUDDY_SRC: .app
+          PACKS_ROOT: ${{ github.workspace }}
+        run: python3 "$RUNNER_TEMP/packs.py" check --app .app/bin/DotBuddy
+      - name: Pull request rules and previews
+        if: ${{ !cancelled() }}
+        env:
+          DOTBUDDY_SRC: .app
+          PACKS_ROOT: ${{ github.workspace }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: python3 "$RUNNER_TEMP/packs.py" check-pr --base "$BASE" --author "$AUTHOR" --app .app/bin/DotBuddy --previews "$RUNNER_TEMP/previews"
+      - name: Upload previews for review
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: previews
+          path: ${{ runner.temp }}/previews
+          if-no-files-found: ignore
+
+  publish:
+    name: Update the gallery and the site
+    if: github.event_name != 'pull_request'
+    runs-on: macos-15
+    permissions:
+      contents: write
+    concurrency: publish
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v7
+        with:
+          repository: doldoldol21/dot-buddy
+          path: .app
+      - name: Build Dot Buddy
+        working-directory: .app
+        run: APP="$RUNNER_TEMP/Dot.app" FORCE=1 ./build.sh
+      - name: Previews, index and gallery
+        env:
+          DOTBUDDY_SRC: .app
+        run: python3 scripts/packs.py build --app .app/bin/DotBuddy
+      - name: Commit
+        run: |
+          git add packs README.md
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Update previews, index and gallery"
+          git push
+      - name: Site
+        run: python3 scripts/site.py _site
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    name: Publish the site
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

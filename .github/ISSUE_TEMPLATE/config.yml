@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A bug or idea for the app
+    url: https://github.com/doldoldol21/dot-buddy/issues/new/choose
+    about: Dot Buddy itself lives in doldoldol21/dot-buddy.

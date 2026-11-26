@@ -1,0 +1,22 @@
+name: Character idea
+description: Describe a character you'd like to see. Someone who draws may pick it up as a community pack.
+labels: [character]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fan art ideas are fine too: say which character and series it's based on.
+        Drawing it yourself? See [README.md](https://github.com/dot-buddy/characters/blob/main/README.md#share-your-character).
+  - type: textarea
+    id: idea
+    attributes:
+      label: The character
+      description: What it is, what it looks like, a color or two. A sketch helps if you have one.
+      placeholder: A small teacup with a painted blue band. Steam curls up while it waits.
+    validations:
+      required: true
+  - type: textarea
+    id: motions
+    attributes:
+      label: Motions or quirks
+      description: Anything it should do differently (how it walks, what it does when a session is done, when it sleeps).
