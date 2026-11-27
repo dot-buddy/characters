@@ -122,6 +122,48 @@ def same_shape(a, b):
     return a and b and len(a & b) / len(a | b) >= SAME_SHAPE
 
 
+LOOKALIKE = 0.85            # an outline this close to an official character's (flipped, moved, resized) gets a maintainer's look
+GRID = 24
+
+
+def _iou(a, b):
+    return len(a & b) / len(a | b) if a | b else 0.0
+
+
+def _fit(s):
+    """The outline scaled into a GRID x GRID box (keeping its proportions), so a resized copy lines up"""
+    xs, ys = [x for x, _ in s], [y for _, y in s]
+    x0, y0, w, h = min(xs), min(ys), max(xs) - min(xs) + 1, max(ys) - min(ys) + 1
+    m = max(w, h)
+    return {(gx, gy) for gx in range(GRID) for gy in range(GRID)
+            if (x0 + int((gx + .5) * m / GRID) - (m - w) // 2, y0 + int((gy + .5) * m / GRID)) in s}
+
+
+def likeness(a, b):
+    """How alike two idle outlines are, 0 to 1, allowing a flip, a shift of a dot or two and a different size.
+    Measured on the gallery in 2026-11: different characters reach 0.83 at most; a flipped, moved or doubled copy 0.91-1.0,
+    a copy with a hat added 0.87-0.91"""
+    if not a or not b:
+        return 0.0
+    best, fa = 0.0, _fit(a)
+    for bb in (b, {(-x, y) for x, y in b}):
+        fb = _fit(bb)
+        for dx in range(-2, 3):
+            for dy in range(-2, 3):
+                best = max(best, _iou(a, {(x + dx, y + dy) for x, y in bb}))
+                if abs(dx) <= 1 and abs(dy) <= 1:
+                    best = max(best, _iou(fa, {(x + dx, y + dy) for x, y in fb}))
+    return round(best, 2)
+
+
+def official(meta_or_entry):
+    """Official characters are the ones the maintainers drew (check-pr makes a new pack's author its pull request's author)"""
+    return str(meta_or_entry.get("author", "")).strip().lower() in MAINTAINERS
+
+
+OFFICIAL_WORDS = ("official", "공식")
+
+
 def check_pack(d, names):
     """Problems with one pack folder (empty list = fine)"""
     pid, errs = os.path.basename(d), []
@@ -214,6 +256,8 @@ def entry(d):
         files.append({"name": f, "sha256": hashlib.sha256(b).hexdigest(), "size": len(b)})
     e = {"id": os.path.basename(d), "name": meta["name"].strip(), "author": meta["author"].strip(), "license": meta["license"],
          "description": meta.get("description", "").strip(), "files": files}
+    if official(meta):
+        e["official"] = True
     if meta.get("names"):
         e["names"] = meta["names"]
     if meta.get("descriptions"):
@@ -238,8 +282,8 @@ def app_load(app):
 def check(app=None):
     names, bad = set(motions()), 0
     loaded = app_load(app) if app else {}
-    shapes = {}                                                            # outlines of the packs already checked (alphabetical: the later one is flagged)
-    for d in packs():
+    shapes = {}                                                            # outlines of the packs already checked (oldest first: the newer one is flagged)
+    for d in sorted(packs(), key=lambda d: (added(os.path.basename(d)), os.path.basename(d))):
         shapes_next = (os.path.basename(d), idle_shape(d))
         errs = check_pack(d, names)
         pid = os.path.basename(d)
@@ -275,7 +319,8 @@ def gallery(entries):
         desc = f'<br>{e["description"]}' if e["description"] else ""
         if e.get("based_on"):
             desc += f'<br><sub>Fan art of {e["based_on"]}</sub>'
-        rows.append(f'| {img} | **{e["name"]}**{desc} | [@{e["author"]}](https://github.com/{e["author"]}) | {e["license"]} |')
+        badge = ' <img src="site/official.svg" width="14" height="14" alt="Official" title="Official: drawn by the Dot Buddy team">' if e.get("official") else ""
+        rows.append(f'| {img} | **{e["name"]}**{badge}{desc} | [@{e["author"]}](https://github.com/{e["author"]}) | {e["license"]} |')
     return "\n".join(rows)
 
 
@@ -343,6 +388,53 @@ def git(*a):
     return subprocess.run(["git", "-C", HERE, *a], capture_output=True, text=True, check=True).stdout
 
 
+def official_packs(exclude=()):
+    """{id: chara.json} of the official packs (drawn by a maintainer)"""
+    out = {}
+    for d in packs():
+        pid = os.path.basename(d)
+        try:
+            meta = json.load(open(os.path.join(d, "chara.json"), encoding="utf-8"))
+        except Exception:
+            continue
+        if pid not in exclude and isinstance(meta, dict) and official(meta):
+            out[pid] = meta
+    return out
+
+
+def official_name_errors(pid):
+    """Someone else's pack can't take an official character's name or call itself official"""
+    try:
+        meta = json.load(open(os.path.join(COMMUNITY, pid, "chara.json"), encoding="utf-8"))
+    except Exception:
+        return []
+    names = [meta.get("name", "")] + list((meta.get("names") or {}).values()) if isinstance(meta, dict) else []
+    names = [n.strip().casefold() for n in names if isinstance(n, str) and n.strip()]
+    taken = {n.strip().casefold(): oid for oid, m in official_packs(exclude={pid}).items()
+             for n in [m.get("name", "")] + list((m.get("names") or {}).values()) if isinstance(n, str) and n.strip()}
+    errs = []
+    for n in names:
+        if n in taken:
+            errs.append(f"'{n}' is the name of the official character '{taken[n]}'; pick another name")
+        elif any(w in n for w in OFFICIAL_WORDS):
+            errs.append(f"'{n}': only the maintainers' characters are official, so the name can't say so")
+    return errs
+
+
+def official_lookalikes(ids):
+    """(pack, note) for each changed pack whose outline is close to an official character's"""
+    out, ref = [], {oid: idle_shape(os.path.join(COMMUNITY, oid)) for oid in official_packs()}
+    for pid in ids:
+        if pid in ref or not os.path.isfile(os.path.join(COMMUNITY, pid, "idle.png")):
+            continue
+        mine = idle_shape(os.path.join(COMMUNITY, pid))
+        hits = sorted(((likeness(mine, s), oid) for oid, s in ref.items() if s), reverse=True)
+        if hits and hits[0][0] >= LOOKALIKE:
+            out.append((pid, f"'{pid}' looks like the official character '{hits[0][1]}' (outline {hits[0][0]:.2f}, flips and sizes included); "
+                             "a maintainer will compare them before merging"))
+    return out
+
+
 def check_pr(base, author, app=None, previews=None):
     """Rules for one pull request that touches packs/: everything inside one pack folder, no generated files,
     and the pack is the pull request author's (a new pack names them as author; an existing one was already theirs)"""
@@ -350,7 +442,7 @@ def check_pr(base, author, app=None, previews=None):
     mine = [f for f in changed if f.startswith("packs/")]
     if not mine:
         print("no packs changed"); return True
-    errs, ids = [], sorted({f.split("/")[1] for f in mine if f.count("/") >= 2})
+    errs, warns, ids = [], [], sorted({f.split("/")[1] for f in mine if f.count("/") >= 2})
     gen = [f for f in mine if f.count("/") < 2 or os.path.basename(f) in GENERATED]
     if gen:
         errs.append("leave these to CI (it makes them after the merge): " + ", ".join(gen))
@@ -373,10 +465,18 @@ def check_pr(base, author, app=None, previews=None):
                 errs.append(f"'{pid}' is @{was}'s character; only they (or a maintainer) can change it")
             elif was is None and now.strip().lower() != author.lower():
                 errs.append(f"packs/{pid}/chara.json: 'author' must be your GitHub username ({author})")
+        for pid in ids:
+            errs += official_name_errors(pid)
+        for pid, w in official_lookalikes(ids):
+            warns.append(w)
     for e in errs:
         print("FAIL  " + e)
         if os.environ.get("GITHUB_ACTIONS"):
             print(f"::error::{e}")
+    for w in warns:                                                        # for the maintainer reviewing it; doesn't fail the check
+        print("WARN  " + w)
+        if os.environ.get("GITHUB_ACTIONS"):
+            print(f"::warning::{w}")
     if previews and app:
         os.makedirs(previews, exist_ok=True)
         for pid in ids:

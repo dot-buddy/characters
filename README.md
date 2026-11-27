@@ -61,6 +61,7 @@ Fan art also adds `"based_on": "Character (Series)"`.
 ### Rules
 
 - **Draw it yourself.** Don't copy other people's sprites or art, and don't recolor another pack (CI compares outlines).
+- **Official characters** <img src="site/official.svg" width="14" height="14" alt="Official"> are the ones the Dot Buddy team drew. Other packs can't use their names or call themselves official, and a pack that looks like one (flipped, moved or resized too) waits for a maintainer to compare them.
 - **Fan art is welcome** if you drew it and fill in `based_on`. The original character belongs to its owner; your `license` covers only your drawing.
 - Only you can change your pack: CI checks that `author` is the GitHub account opening the pull request.
 - Only `chara.json` and `<motion>.png` files (motion names are in [CHARACTERS.md](https://github.com/doldoldol21/dot-buddy/blob/main/CHARACTERS.md#motion-names)). No other files.

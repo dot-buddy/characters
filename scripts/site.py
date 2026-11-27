@@ -22,13 +22,13 @@ TEXT = {
                how="In the app: right-click the pet → Character → <b>More Characters…</b>, or download a zip here and drop it on your pet.",
                search="Search", by="by", fan="Fan art of {}", get="Download zip", add="Add your character", app="Get Dot Buddy",
                other="한국어", other_href="ko/", count="{} characters", empty="No match", report="Report a character",
-               like="Like it on GitHub (❤️ or 👍)", newest="Newest", popular="Most liked", sort="Sort",
+               like="Like it on GitHub (❤️ or 👍)", official="Official: drawn by the Dot Buddy team", newest="Newest", popular="Most liked", sort="Sort",
                foot="Each character keeps the license its author chose. The original characters behind fan art belong to their owners."),
     "ko": dict(title="도트 친구 캐릭터", lede="코딩 에이전트가 끝나면 알려 주는 맥 바탕화면 도트 펫, 도트 친구에 쓸 수 있게 사람들이 그린 캐릭터예요.",
                how="앱에서 펫을 오른쪽 클릭 → 캐릭터 → <b>다른 캐릭터 받기…</b> 로 받거나, 여기서 zip 을 받아 펫에 끌어다 놓아도 돼요.",
                search="검색", by="그린 사람", fan="팬아트 · 원작 {}", get="zip 받기", add="내 캐릭터 올리기", app="도트 친구 받기",
                other="English", other_href="../", count="캐릭터 {}개", empty="맞는 캐릭터가 없어요", report="캐릭터 신고",
-               like="GitHub에서 좋아요 누르기 (❤️ 또는 👍)", newest="최신순", popular="인기순", sort="정렬",
+               like="GitHub에서 좋아요 누르기 (❤️ 또는 👍)", official="공식: 도트 친구 팀이 그린 캐릭터", newest="최신순", popular="인기순", sort="정렬",
                foot="캐릭터마다 그린 사람이 고른 라이선스를 따라요. 팬아트의 원작 캐릭터 권리는 원작자에게 있어요."),
 }
 
@@ -57,6 +57,8 @@ h1 { font-size: 36px; line-height: 1.2; margin: 8px 0 8px; }
 .card .pic img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
 .card .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .card h2 { font-size: 17px; margin: 0; }
+.card h2 .official { display: inline-flex; vertical-align: -2px; margin-left: 4px; }
+.card h2 .official svg { width: 16px; height: 16px; }
 .card .meta { color: var(--muted); font-size: 13px; }
 .card .fan { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; align-self: flex-start; }
 .card p { margin: 4px 0 8px; font-size: 14px; }
@@ -90,6 +92,7 @@ q.addEventListener('input', () => {
 
 def page(lang, packs, prefix):
     t, e = TEXT[lang], html.escape
+    mark = (ROOT / "site" / "official.svg").read_text(encoding="utf-8").replace("<title>Official</title>", "")   # the pixel check (title comes from the span)
     cards = []
     for p in packs:
         name = p.get("names", {}).get(lang) or p.get("names", {}).get("en") or p["name"]
@@ -98,10 +101,11 @@ def page(lang, packs, prefix):
         pic = f'<img src="{prefix}packs/{e(p["id"])}/preview.gif" alt="{e(name)}" loading="lazy">' if p.get("preview") else ""
         fan = f'<span class="fan">{e(t["fan"].format(p["based_on"]))}</span>' if p.get("based_on") else ""
         desc = f'<p>{e(about)}</p>' if about else ""
+        badge = f'<span class="official" role="img" title="{e(t["official"])}" aria-label="{e(t["official"])}">{mark}</span>' if p.get("official") else ""
         disc = p.get("discussion", "")
         like = (f'<a class="like" href="{e(disc)}" title="{e(t["like"])}" aria-label="{e(t["like"])}: {int(p.get("likes", 0))}">♥ {int(p.get("likes", 0))}</a>'
                 if disc.startswith(f"https://github.com/{REPO}/discussions/") else "")
-        cards.append(f'<article class="card" data-text="{e(text)}" data-added="{e(p.get("added", ""))}" data-likes="{int(p.get("likes", 0))}"><div class="pic">{pic}</div><div class="body"><h2>{e(name)}</h2>'
+        cards.append(f'<article class="card" data-text="{e(text)}" data-added="{e(p.get("added", ""))}" data-likes="{int(p.get("likes", 0))}"><div class="pic">{pic}</div><div class="body"><h2>{e(name)}{badge}</h2>'
                      f'<div class="meta">{t["by"]} <a href="https://github.com/{e(p["author"])}">@{e(p["author"])}</a> · {e(p["license"])}</div>{fan}{desc}'
                      f'<div class="acts"><a class="get" href="{prefix}{e(p["id"])}.zip" download>{t["get"]}</a>{like}</div></div></article>')
     url = SITE + ("ko/" if lang == "ko" else "")
