@@ -29,6 +29,12 @@ with tempfile.TemporaryDirectory() as td:
     check("a bad pack is refused for each reason", [k in errs for k in ("folder name", "run.sh", "'author' is required", "'license' must be", "idle.png is not a PNG")], [True] * 5)
 
     open(os.path.join(bad, "chara.json"), "w").write('{"name": "x", "author": "a", "license": "MIT", "descriptions": {"ko": "' + "가" * 141 + '"}}')
+    hatp = os.path.join(td, "hat"); shutil.copytree(os.path.join(cm.COMMUNITY, ids[0]), hatp)
+    def hat_errs(v):
+        m = json.load(open(os.path.join(cm.COMMUNITY, ids[0], "chara.json"), encoding="utf-8")); m["hat"] = v
+        json.dump(m, open(os.path.join(hatp, "chara.json"), "w", encoding="utf-8"))
+        return any("'hat'" in e for e in cm.check_pack(hatp, names))
+    check("a hat spot is false or a dot inside the frame", [hat_errs(v) for v in (False, [5, 5], True, [5], [999, 1], [-1, 2], [1.5, 2], "top")], [False, False] + [True] * 6)
     check("a description in another language is limited like the main one", any("'descriptions'" in e for e in cm.check_pack(bad, names)), True)
 
     cp = os.path.join(td, ids[0] + "-copy"); shutil.copytree(os.path.join(cm.COMMUNITY, ids[0]), cp)

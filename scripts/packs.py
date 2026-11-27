@@ -30,7 +30,7 @@ APP_SRC = "https://raw.githubusercontent.com/doldoldol21/dot-buddy/main/Sources/
 ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,31}$")
 RESERVED = {"acorn", "mandu", "sprout", "cloud", "candle", "pebble", "index", "readme"}   # the built-in characters keep their names
 LICENSES = {"CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "MIT"}
-KEYS = {"name", "names", "descriptions", "frame", "height", "fps", "eyes", "author", "license", "description", "based_on"}
+KEYS = {"name", "names", "descriptions", "frame", "height", "fps", "eyes", "hat", "author", "license", "description", "based_on"}
 REQUIRED = ["idle", "walk", "work", "sleep", "ask"]                      # the motions people see most (fall/jump: one of the two)
 MAINTAINERS = {"doldoldol21"}                                              # check-pr's ownership rules don't apply to them
 SAME_SHAPE = 0.95                                                          # idle outlines this alike are treated as the same character
@@ -237,6 +237,11 @@ def check_pack(d, names):
                     errs.append(f"{f}: not a PNG")
                 elif s[1] != fh or s[0] % fw or not 1 <= s[0] // fw <= MAX_FRAMES:
                     errs.append(f"{f}: {s[0]}x{s[1]}, but frames are {fw}x{fh} side by side (1-{MAX_FRAMES} frames)")
+            # where the special-day hat goes: false (none), or the brim's middle dot [x, y] inside one idle frame
+            hat = meta.get("hat", None)
+            if not (hat is None or hat is False or (isinstance(hat, list) and len(hat) == 2 and all(type(v) is int for v in hat)
+                                                    and 0 <= hat[0] < fw and 0 <= hat[1] < fh)):
+                errs.append(f"chara.json: 'hat' must be false or [x, y] inside one {fw}x{fh} frame")
     return errs
 
 

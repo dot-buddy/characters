@@ -46,5 +46,11 @@
  "author": "doldoldol21",
  "license": "CC-BY-4.0",
  "description": "A little teacup that steams while it waits.",
- "descriptions": {"ko": "기다리는 동안 김이 모락모락 나는 작은 찻잔"}
+ "descriptions": {
+  "ko": "기다리는 동안 김이 모락모락 나는 작은 찻잔"
+ },
+ "hat": [
+  7,
+  10
+ ]
 }
