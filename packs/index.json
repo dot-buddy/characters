@@ -179,6 +179,7 @@
      "size": 420
     }
    ],
+   "official": true,
    "names": {
     "en": "Ghost",
     "ko": "유령"
@@ -369,6 +370,7 @@
      "size": 472
     }
    ],
+   "official": true,
    "names": {
     "en": "Rice Ball",
     "ko": "주먹밥"
@@ -776,6 +778,7 @@
      "size": 482
     }
    ],
+   "official": true,
    "names": {
     "en": "Snowman",
     "ko": "눈사람"
@@ -966,6 +969,7 @@
      "size": 454
     }
    ],
+   "official": true,
    "names": {
     "en": "Teacup",
     "ko": "찻잔"

@@ -11,11 +11,11 @@ Characters people drew for [Dot Buddy](https://github.com/doldoldol21/dot-buddy)
 <!-- gallery:start -->
 | | Character | By | License |
 |---|---|---|---|
-| <img src="packs/ghost/preview.gif" width="220" alt="Ghost"> | **Ghost**<br>A friendly little ghost whose hem sways as it floats along. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
-| <img src="packs/onigiri/preview.gif" width="220" alt="Rice Ball"> | **Rice Ball**<br>A rice ball in a seaweed wrap, ready for a long day of coding. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
+| <img src="packs/ghost/preview.gif" width="220" alt="Ghost"> | **Ghost** <img src="site/official.svg" width="14" height="14" alt="Official" title="Official: drawn by the Dot Buddy team"><br>A friendly little ghost whose hem sways as it floats along. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
+| <img src="packs/onigiri/preview.gif" width="220" alt="Rice Ball"> | **Rice Ball** <img src="site/official.svg" width="14" height="14" alt="Official" title="Official: drawn by the Dot Buddy team"><br>A rice ball in a seaweed wrap, ready for a long day of coding. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
 | <img src="packs/onion/preview.gif" width="220" alt="Onion"> | **Onion**<br>A rosy onion with a fresh green sprout and a sunny little smile. | [@GaneshUbale](https://github.com/GaneshUbale) | CC-BY-4.0 |
-| <img src="packs/snowman/preview.gif" width="220" alt="Snowman"> | **Snowman**<br>A snowman with a red scarf and a carrot nose. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
-| <img src="packs/teacup/preview.gif" width="220" alt="Teacup"> | **Teacup**<br>A little teacup that steams while it waits. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
+| <img src="packs/snowman/preview.gif" width="220" alt="Snowman"> | **Snowman** <img src="site/official.svg" width="14" height="14" alt="Official" title="Official: drawn by the Dot Buddy team"><br>A snowman with a red scarf and a carrot nose. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
+| <img src="packs/teacup/preview.gif" width="220" alt="Teacup"> | **Teacup** <img src="site/official.svg" width="14" height="14" alt="Official" title="Official: drawn by the Dot Buddy team"><br>A little teacup that steams while it waits. | [@doldoldol21](https://github.com/doldoldol21) | CC-BY-4.0 |
 <!-- gallery:end -->
 
 ## Artists
