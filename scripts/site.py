@@ -23,13 +23,13 @@ TEXT = {
                search="Search", by="by", fan="Fan art of {}", get="Download zip", add="Add your character", app="Get Dot Buddy",
                other="한국어", other_href="ko/", count="{} characters", empty="No match", report="Report a character",
                like="Like it on GitHub (❤️ or 👍)", official="Official: drawn by the Dot Buddy team", newest="Newest", popular="Most liked", sort="Sort",
-               foot="Each character keeps the license its author chose. The original characters behind fan art belong to their owners."),
+               sponsor="Sponsor Dot Buddy and get supporter-only characters", foot="Each character keeps the license its author chose. The original characters behind fan art belong to their owners."),
     "ko": dict(title="도트 친구 캐릭터", lede="코딩 에이전트가 끝나면 알려 주는 맥 바탕화면 도트 펫, 도트 친구에 쓸 수 있게 사람들이 그린 캐릭터예요.",
                how="앱에서 펫을 오른쪽 클릭 → 캐릭터 → <b>다른 캐릭터 받기…</b> 로 받거나, 여기서 zip 을 받아 펫에 끌어다 놓아도 돼요.",
                search="검색", by="그린 사람", fan="팬아트 · 원작 {}", get="zip 받기", add="내 캐릭터 올리기", app="도트 친구 받기",
                other="English", other_href="../", count="캐릭터 {}개", empty="맞는 캐릭터가 없어요", report="캐릭터 신고",
                like="GitHub에서 좋아요 누르기 (❤️ 또는 👍)", official="공식: 도트 친구 팀이 그린 캐릭터", newest="최신순", popular="인기순", sort="정렬",
-               foot="캐릭터마다 그린 사람이 고른 라이선스를 따라요. 팬아트의 원작 캐릭터 권리는 원작자에게 있어요."),
+               sponsor="도트 친구를 후원하면 후원자 전용 캐릭터를 드려요", foot="캐릭터마다 그린 사람이 고른 라이선스를 따라요. 팬아트의 원작 캐릭터 권리는 원작자에게 있어요."),
 }
 
 CSS = """
@@ -72,6 +72,7 @@ h1 { font-size: 36px; line-height: 1.2; margin: 8px 0 8px; }
 .card .get:focus-visible, .bar input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .empty { color: var(--muted); }
 footer { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.sponsor { display: block; max-width: 560px; margin: 4px 0 24px; } .sponsor img { display: block; width: 100%; height: auto; image-rendering: pixelated; border-radius: 8px; }
 @media (max-width: 600px) { h1 { font-size: 28px; } header nav a.long { display: none; } }
 """
 
@@ -136,6 +137,7 @@ def page(lang, packs, prefix):
 <h1>{t["title"]}</h1>
 <p class="lede">{e(t["lede"])}</p>
 <p class="how">{t["how"]}</p>
+<a class="sponsor" href="https://github.com/sponsors/doldoldol21"><img src="{prefix}{"sponsor.ko.gif" if lang == "ko" else "sponsor.gif"}" width="560" height="128" alt="{e(t["sponsor"])}"></a>
 <div class="bar">
   <input id="q" type="search" placeholder="{t["search"]}" aria-label="{t["search"]}">
   <span class="count" id="count" data-fmt="{t["count"]}">{t["count"].format(len(packs))}</span>
@@ -149,6 +151,7 @@ def page(lang, packs, prefix):
 </main>
 <footer>{t["foot"]} <a href="https://github.com/{REPO}/issues/new?template=report_character.yml">{t["report"]}</a></footer>
 <script>{JS}</script>
+<script src="{prefix}walker.js" defer></script>
 </body>
 </html>
 """

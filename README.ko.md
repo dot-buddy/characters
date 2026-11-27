@@ -6,6 +6,8 @@
 
 **받는 법:** 앱에서 펫을 오른쪽 클릭 → 캐릭터 → **다른 캐릭터 받기…** 에서 **받기** 를 눌러요. [갤러리](https://dot-buddy.github.io/characters/ko/)에서 zip 을 받아 펫에 끌어다 놓아도 돼요(압축은 안 풀어도 돼요).
 
+<p align="center"><a href="https://github.com/sponsors/doldoldol21"><img src="site/sponsor.ko.gif" width="560" alt="도트 친구를 후원하면 후원자 전용 캐릭터를 드려요"></a></p>
+
 ## 그려 주신 분들
 
 갤러리에 캐릭터를 그려 주신 분들, 고마워요. 하나 그려 올리면 여기에 함께 나와요.

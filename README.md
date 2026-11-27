@@ -6,6 +6,8 @@ Characters people drew for [Dot Buddy](https://github.com/doldoldol21/dot-buddy)
 
 **Get one:** in the app, right-click the pet → Character → **More Characters…** and choose **Install**. Or download a zip from the [gallery](https://dot-buddy.github.io/characters/) and drop it on your pet; no need to unzip.
 
+<p align="center"><a href="https://github.com/sponsors/doldoldol21"><img src="site/sponsor.gif" width="560" alt="Sponsor Dot Buddy and get supporter-only characters"></a></p>
+
 ## Gallery
 
 <!-- gallery:start -->
